@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_email']) || $_SESSION['uloga'] !== 'Admin') {
 $poruka = "";
 $greska = "";
 
-// 1. Dobavljanje trenutnih podataka terena za formu
+
 if (isset($_GET['id'])) {
     $id = intval($_GET['id']);
     $stmt = $conn->prepare("SELECT * FROM tereni WHERE id = ?");
@@ -29,7 +29,7 @@ if (isset($_GET['id'])) {
     exit();
 }
 
-// 2. Obrada forme nakon klika na "Spasi izmjene"
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $naziv = $_POST['naziv'];
     $sport = $_POST['sport'];

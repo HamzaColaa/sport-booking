@@ -7,6 +7,9 @@ if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'Admin') {
     die("Nemate ovlaštenje za pristup ovoj stranici.");
 }
 
+// Tereni iz baze (DODATO ZA UPRAVLJANJE TERENIMA)
+$tereni_result = $conn->query("SELECT * FROM tereni ORDER BY id DESC");
+
 // rez iz baze
 $rezervacije_result = $conn->query("SELECT * FROM rezervacije ORDER BY id DESC");
 
@@ -40,6 +43,77 @@ $poruke_result = $conn->query("SELECT * FROM poruke ORDER BY id DESC");
                 <a href="index.php" class="w-full md:w-auto text-center bg-slate-800 hover:bg-slate-700 text-white font-bold px-5 py-3 rounded-xl text-sm transition">
                     Vrati se na sajt
                 </a>
+            </div>
+        </div>
+
+        <?php if (isset($_GET['poruka'])): ?>
+            <div class="bg-emerald-100 text-emerald-800 p-4 rounded-2xl font-bold border border-emerald-200">
+                ✅ <?= htmlspecialchars($_GET['poruka']) ?>
+            </div>
+        <?php endif; ?>
+        <?php if (isset($_GET['greska'])): ?>
+            <div class="bg-rose-100 text-rose-800 p-4 rounded-2xl font-bold border border-rose-200">
+                ❌ <?= htmlspecialchars($_GET['greska']) ?>
+            </div>
+        <?php endif; ?>
+
+        <div class="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
+            <div class="p-6 border-b border-slate-100 bg-amber-500 text-white flex justify-between items-center">
+                <div>
+                    <h3 class="text-lg font-black">Upravljanje sportskim terenima</h3>
+                    <p class="text-xs text-amber-100 mt-0.5">Dodavanje, izmjena i brisanje terena iz baze</p>
+                </div>
+                <span class="bg-white text-amber-600 text-xs font-bold px-2.5 py-1 rounded-full">
+                    Ukupno: <?= $tereni_result ? $tereni_result->num_rows : 0 ?>
+                </span>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-100 text-slate-500 font-semibold text-xs uppercase tracking-wider">
+                            <th class="p-4 pl-6">Slika</th>
+                            <th class="p-4">Naziv Terena</th>
+                            <th class="p-4">Sport</th>
+                            <th class="p-4">Lokacija</th>
+                            <th class="p-4">Cijena po satu</th>
+                            <th class="p-4 pr-6 text-right">Akcije</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
+                        <?php if ($tereni_result && $tereni_result->num_rows > 0): ?>
+                            <?php while($teren = $tereni_result->fetch_assoc()): ?>
+                                <tr class="hover:bg-slate-50/80 transition">
+                                    <td class="p-4 pl-6">
+                                        <img src="<?= ltrim($teren['slika'], '/') ?>" alt="" class="w-16 h-10 object-cover rounded-lg border border-slate-200">
+                                    </td>
+                                    <td class="p-4 font-bold text-slate-900"><?= htmlspecialchars($teren['naziv']) ?></td>
+                                    <td class="p-4">
+                                        <span class="inline-flex items-center bg-blue-50 text-blue-700 font-bold px-2.5 py-0.5 rounded-full text-xs">
+                                            <?= htmlspecialchars($teren['sport']) ?>
+                                        </span>
+                                    </td>
+                                    <td class="p-4 text-slate-600"><?= htmlspecialchars($teren['lokacija']) ?></td>
+                                    <td class="p-4 font-black text-emerald-600"><?= htmlspecialchars($teren['cijena']) ?> KM</td>
+                                    <td class="p-4 pr-6 text-right space-x-2">
+                                        <a href="uredi_teren.php?id=<?= $teren['id'] ?>" class="inline-block bg-amber-500 hover:bg-amber-600 text-white font-bold py-1.5 px-3 rounded-xl text-xs transition">
+                                            ✏️ Uredi
+                                        </a>
+                                        <a href="obrisi_teren.php?id=<?= $teren['id'] ?>" 
+                                           onclick="return confirm('Da li ste sigurni da želite trajno obrisati teren: <?= htmlspecialchars($teren['naziv']) ?>?');" 
+                                           class="inline-block bg-rose-500 hover:bg-rose-600 text-white font-bold py-1.5 px-3 rounded-xl text-xs transition">
+                                            🗑️ Obriši
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="6" class="p-8 text-center text-slate-400 font-medium">U bazi nema registrovanih terena.</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
 

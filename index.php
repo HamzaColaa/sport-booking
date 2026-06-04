@@ -2,7 +2,6 @@
 session_start();
 require_once 'config/db.php';
 
-
 $odabraniSport = isset($_GET['sport']) ? $_GET['sport'] : 'Svi';
 
 if ($odabraniSport !== 'Svi') {
@@ -81,7 +80,7 @@ if ($odabraniSport !== 'Svi') {
                             </div>
 
                             <?php if (isset($_SESSION['user_email'])): ?>
-                                <a href="rezervacija.php?teren_id=<?= $teren['id'] ?>" class="block text-center w-full mt-5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold py-3 rounded-xl hover:scale-[1.01] transition">
+                                <a href="rezervacija.php?teren_id=<?= $teren['id'] ?>" class="block text-center w-full mt-5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold py-3 rounded-xl transition">
                                     Rezerviši Termin
                                 </a>
                             <?php else: ?>
@@ -93,7 +92,9 @@ if ($odabraniSport !== 'Svi') {
                     </div>
                 <?php endwhile; ?>
             <?php else: ?>
-                <p class="text-slate-500 col-span-3 text-center py-10">Nema dostupnih terena za odabrani sport.</p>
+                <div class="col-span-3 text-center py-10">
+                    <p class="text-slate-500">Nema dostupnih terena u bazi podataka.</p>
+                </div>
             <?php endif; ?>
         </div>
     </div>
